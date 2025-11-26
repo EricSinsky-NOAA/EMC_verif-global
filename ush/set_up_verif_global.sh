@@ -15,28 +15,41 @@ export RUN_ENVIR="emc"
 export envir="dev"
 
 ## Create output directory and set output related environment variables
-if [ -d "$OUTPUTROOT" ] ; then
-   echo "OUTPUTROOT ($OUTPUTROOT) ALREADY EXISTS"
-   echo "OVERRIDE CURRENT OUTPUTROOT? [yes/no]"
-   read override
-   case "$override" in
-       yes)
-           echo "Removing current OUTPUTROOT and making new directory"
-           rm -r $OUTPUTROOT
-           mkdir -p $OUTPUTROOT
-           ;;
-       no)
-           echo "Please set new OUTPUTROOT"
-           exit
-           ;;
-       *)
-           echo "$override is not a valid choice, please choose [yes or no]"
-           exit
-           ;;
-   esac
-else
-   mkdir -p ${OUTPUTROOT}
+#if [ -d "$OUTPUTROOT" ] ; then
+#   echo "OUTPUTROOT ($OUTPUTROOT) ALREADY EXISTS"
+#   echo "OVERRIDE CURRENT OUTPUTROOT? [yes/no]"
+#   read override
+#   case "$override" in
+#       yes)
+#           echo "Removing current OUTPUTROOT and making new directory"
+#           rm -r $OUTPUTROOT
+#           mkdir -p $OUTPUTROOT
+#           ;;
+#       no)
+#           echo "Please set new OUTPUTROOT"
+#           exit
+#           ;;
+#       *)
+#           echo "$override is not a valid choice, please choose [yes or no]"
+#           exit
+#           ;;
+#   esac
+#else
+#   mkdir -p ${OUTPUTROOT}
+#fi
+
+# Ensure OUTPUTROOT is defined
+if [ -z "$OUTPUTROOT" ]; then
+    echo "ERROR: OUTPUTROOT is not set."
+    exit 1
 fi
+
+timestamp=$(date +"%Y%m%d%H%M%S")
+export OUTPUTROOT="${OUTPUTROOT}_${timestamp}"
+
+# Create directory
+mkdir -p "$OUTPUTROOT"
+
 
 echo "Output will be in: $OUTPUTROOT"
 export COMROOT="$OUTPUTROOT/com"
@@ -128,6 +141,8 @@ if [ $machine = "WCOSS2" ]; then
     export QUEUESERV="dev_transfer"
     export PARTITION_BATCH=""
     export nproc="128"
+    export nnode="2"
+    export total_procs=$(( nnode * nproc ))
     export MPMD="YES"
 elif [ $machine = "HERA" ]; then
     export ACCOUNT="fv3-cpu"
