@@ -55,7 +55,7 @@ else:
           +str(nimages))
 
 # Set up job wall time information
-web_walltime = '180'
+web_walltime = '360'
 walltime_seconds = datetime.timedelta(minutes=int(web_walltime)) \
         .total_seconds()
 walltime = (datetime.datetime.min
@@ -896,6 +896,52 @@ with open(web_job_filename, 'a') as web_job_file:
                            +' "'+'\n')
         web_job_file.write('fi'+'\n')
         web_job_file.write('\n')
+        images_dir = os.path.join(DATA, RUN, 'metplus_output', 'images')
+        dest_dir = os.path.join(webdir, RUN_type, 'images')
+        log_dir = os.path.join(DATA, 'batch_jobs')
+        if RUN in ("grid2grid_step2", "grid2obs_step2"):
+            web_job_file.write('''\
+# Prepare file list for transfer
+DEST="esinsky@emcrzdm.ncep.noaa.gov:{dest_dir}"
+
+# Create list of all files and symlinks
+find "{images_dir}" \\( -type f -o -type l \\) -printf '%p\\n' > {log_dir}/all_images_{RUN}.txt
+
+# Split into 4 roughly equal parts
+split -n l/4 {log_dir}/all_images_{RUN}.txt {log_dir}/{RUN}_part_
+
+# Generate PBS jobs for each part
+for f in {log_dir}/{RUN}_part_*; do
+    PBS_NAME=$(basename ${{f}})
+    PBS_FILE="{log_dir}/job_${{PBS_NAME}}_{RUN}.pbs"
+    LOGFILE="{log_dir}/image_transfer_${{PBS_NAME}}_{RUN}.log"
+
+    cat > "$PBS_FILE" <<EOF
+#!/bin/sh
+#PBS -q dev_transfer
+#PBS -A {ACCOUNT}
+#PBS -V
+#PBS -N image_${{PBS_NAME}}
+#PBS -l walltime=6:00:00
+#PBS -l select=1:ncpus=1:ompthreads=1
+#PBS -o $LOGFILE
+#PBS -j oe
+
+cd \\$PBS_O_WORKDIR
+
+PARTFILE=${{f}}
+
+echo "[\\$(date)] Starting transfer for \\$PARTFILE"
+
+rsync -avIL --no-relative --files-from="\\$PARTFILE" / "$DEST"
+
+echo "[\\$(date)] Finished transfer for \\$PARTFILE"
+EOF
+    # Submit the PBS job
+    qsub "$PBS_FILE"
+done
+exit
+\n'''.format(images_dir=images_dir, dest_dir=dest_dir, log_dir=log_dir, RUN=RUN, ACCOUNT=ACCOUNT))
         if RUN == 'fit2obs_plots':
             web_job_file.write('scp -r '+ os.path.join(DATA, RUN, 'images')
                                +' '+webhostid+'@'+webhost+':'
