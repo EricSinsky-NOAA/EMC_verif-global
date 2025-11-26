@@ -289,7 +289,7 @@ for pd_row in pd_rows_list:
             line_type+'_'+var+'_'+region, RUN.split('_')[0], verif_type,
             'data', stat+'_'+model1+'_'+model1_truth_name+'_valid'
             +start_date+'to'+end_date+'_valid'+valid_hour_start+'00to'
-            +valid_hour_end+'00Z_init'+init_hour_start+'00to'+init_hour_end
+            +valid_hour_start+'00Z_init'+init_hour_start+'00to'+init_hour_end
             +'00Z_fcst_lead_avgs_fcst'+var+level+'_obs'+var+level
             +'_vxmask'+region+'.txt'
         )
@@ -301,7 +301,7 @@ for pd_row in pd_rows_list:
             line_type+'_'+var+'_'+region, RUN.split('_')[0], verif_type,
             'data', stat+'_'+model2+'_'+model2_truth_name+'_valid'
             +start_date+'to'+end_date+'_valid'+valid_hour_start+'00to'
-            +valid_hour_end+'00Z_init'+init_hour_start+'00to'+init_hour_end
+            +valid_hour_start+'00Z_init'+init_hour_start+'00to'+init_hour_end
             +'00Z_fcst_lead_avgs_fcst'+var+level+'_obs'+var+level
             +'_vxmask'+region+'.txt'
         )
@@ -313,7 +313,7 @@ for pd_row in pd_rows_list:
             line_type+'_'+var+'_'+region, RUN.split('_')[0], verif_type,
             'data', stat+'_'+model2+'_'+model2_truth_name+'_valid'
             +start_date+'to'+end_date+'_valid'+valid_hour_start+'00to'
-            +valid_hour_end+'00Z_init'+init_hour_start+'00to'+init_hour_end
+            +valid_hour_start+'00Z_init'+init_hour_start+'00to'+init_hour_end
             +'00Z_fcst_lead_avgs_fcst'+var+level+'_obs'+var+level
             +'_vxmask'+region+'_CI_EMC.txt'
         )
