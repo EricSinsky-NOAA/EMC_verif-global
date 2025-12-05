@@ -883,6 +883,8 @@ for plot_info in plot_info_list:
             savefig_name = savefig_name+'_'+fcst_var_name+'_'+fcst_var_level
         if verif_case == 'precip':
             savefig_name = savefig_name+'_'+fcst_var_thresh
+        if var_name == 'VISsfc' and line_type == 'CTC':
+            savefig_name = savefig_name+'_'+fcst_var_thresh
         savefig_name = (savefig_name+'_fhr'+fcst_lead[:-4]
                         +'_'+grid_vx_mask+'.png')
         logger.info("Saving image as "+savefig_name)
