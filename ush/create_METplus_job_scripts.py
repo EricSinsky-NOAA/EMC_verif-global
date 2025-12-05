@@ -194,6 +194,14 @@ def create_job_scripts_step1(start_date_dt, end_date_dt, case, case_abbrev,
                             +job_env_dict['make_met_data_by']+'.conf'
                         )
                     )
+                if case == 'grid2obs' and case_type == 'conus_sfc':
+                    metplus_conf_list.append(
+                        os.path.join(
+                            make_met_data_conf_dir,
+                            case_type+'_vis_'
+                            +job_env_dict['make_met_data_by']+'.conf'
+                        )
+                    )
                 metplus_conf_list.append(
                     os.path.join(
                         gather_conf_dir, job_env_dict['gather_by']+'.conf'
@@ -798,6 +806,23 @@ def create_job_scripts_step2(start_date_dt, end_date_dt, case, case_abbrev,
                                      'obs_var_name': 'UGRD_VGRD',
                                      'obs_var_levels': ['Z10'],
                                      'obs_var_thresholds': '',
+                                     'obs_var_options': ''},
+                }
+            },
+            'CTC': {
+                'plot_stats_list': 'csi, fbias',
+                'interp' : 'NEAREST',
+                'vx_mask_list' : ['WEST', 'EAST', 'MDW', 'NPL', 'SPL', 'NEC',
+                                  'SEC', 'NWC', 'SWC', 'NMT', 'SMT', 'SWD',
+                                  'GRB', 'LMV', 'GMC', 'APL', 'NAK', 'SAK'],
+                'var_dict': {
+                    'VISsfc': {'fcst_var_name': 'VIS',
+                                     'fcst_var_levels': ['Z0'],
+                                     'fcst_var_thresholds': 'le3000, le5000, le8000',
+                                     'fcst_var_options': '',
+                                     'obs_var_name': 'VIS',
+                                     'obs_var_levels': ['Z0'],
+                                     'obs_var_thresholds': 'le3000, le5000, le8000',
                                      'obs_var_options': ''},
                 }
             }
